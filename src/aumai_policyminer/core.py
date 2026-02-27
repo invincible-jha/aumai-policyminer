@@ -42,6 +42,7 @@ class LogParser:
             List of BehaviorLog instances (invalid lines skipped).
         """
         logs: list[BehaviorLog] = []
+        self.skipped_count = 0
         with path.open(encoding="utf-8") as fh:
             for line_number, line in enumerate(fh, start=1):
                 line = line.strip()
@@ -51,7 +52,7 @@ class LogParser:
                     data = json.loads(line)
                     logs.append(BehaviorLog.model_validate(data))
                 except Exception:
-                    # Silently skip malformed lines; callers can inspect counts
+                    self.skipped_count += 1
                     continue
         return logs
 

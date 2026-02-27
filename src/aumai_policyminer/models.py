@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -22,7 +22,7 @@ class BehaviorLog(BaseModel):
 
     log_id: str
     agent_id: str
-    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     action: str
     context: dict[str, Any] = Field(default_factory=dict)
     outcome: str = Field(default="success")
@@ -71,7 +71,7 @@ class PolicySet(BaseModel):
     name: str = Field(default="Mined Policy Set")
     source_logs: int = Field(default=0, ge=0)
     policies: list[MinedPolicy] = Field(default_factory=list)
-    generated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    generated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def top_policies(self, n: int = 10) -> list[MinedPolicy]:
         """Return the top-n policies sorted by confidence descending.
